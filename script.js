@@ -6,21 +6,16 @@ function render() {
 
     const count = 31;
 
-    const arr = load();
+    const arr = load("save");
 
-    for (let i = 0; i < count + 1; i++) {
+    for (let i = 0; i < count; i++) {
         const tr = document.createElement('tr');
         for (let j = 0; j < 2; j++) {
 
             switch (j) {
                 case 0:
                     const th = document.createElement('th');
-                    if (i == count) {
-                        th.innerText = 'Tea:';
-                    }
-                    else {
-                        th.innerText = i + 1;
-                    }
+                    th.innerText = i + 1;
                     tr.appendChild(th);
                     break;
                 case 1:
@@ -60,9 +55,62 @@ function render() {
         e.addEventListener('input', onchange);
     });
 
+    const teaArr = load('tea');
 
+    const tr = document.createElement("tr");
+    
+
+    let innerHTML = '';
+    tr.insertAdjacentHTML('beforeend', `<th>Tea: </th>`);
+    if (teaArr != undefined) {
+        for (let index = 0; index < teaArr.length; index++) {
+            const elem = teaArr[index];
+            if (index == 0) {
+                innerHTML = `<th class="teaSum">${elem}</th>`;
+            }
+            else {
+                innerHTML = `<th><input type="number" class="teaInput" value=${elem}></th>`;
+            }
+            tr.insertAdjacentHTML('beforeend', innerHTML);                            
+        }
+    }
+    else {
+        innerHTML += '<th class="teaSum">0</th>';
+        innerHTML += `<th><input type="number" class="teaInput"></th>`;
+
+        tr.insertAdjacentHTML('beforeend', innerHTML);
+    }
+    table.appendChild(tr);
+
+    document.querySelectorAll('.teaInput').forEach(e => {
+        e.addEventListener('input', onchangetea);
+    });
 }
+function onchangetea(e) {
+    const sumRow = document.querySelector('.teaSum');
+    const nodes = sumRow.parentNode.childNodes;
 
+    let sum = 0;
+    nodes.forEach((elem, i) => {
+        if (i >= 2 && elem.firstChild.value != '') {
+            sum += parseInt(elem.firstChild.value);
+        }
+    });
+    sumRow.innerText = sum;
+
+    if (nodes[nodes.length - 1].firstChild == e.target) {
+        const th = document.createElement('th');
+
+        const input = document.createElement('input');
+        input.type = "number";
+        input.dataset.row = e.target.dataset.row;
+        input.addEventListener('input', onchangetea);
+
+        th.appendChild(input);
+        sumRow.parentNode.appendChild(th);
+    }
+    save("tea")
+}
 function onchange(e) {
     const sumRow = document.querySelectorAll('.sum')[e.target.dataset.row];
     const nodes = sumRow.parentNode.childNodes;
@@ -99,15 +147,32 @@ function onchange(e) {
         sumRow.parentNode.appendChild(th);
     }
     
-    save();
+    save("save");
 }
 
-function save() {
-    let saveArr = [];
-    const sumArr = document.querySelectorAll('.sum');
+function save(key) {
+    if (key == "save") {
+        let saveArr = [];
+        const sumArr = document.querySelectorAll('.sum');
     
-    sumArr.forEach(e => {
-        const elem = e.parentNode;
+        sumArr.forEach(e => {
+            const elem = e.parentNode;
+            let arr = [];
+            arr.push(elem.childNodes[1].innerText);
+            elem.childNodes.forEach((e, i) => {
+                if (i >= 2) {
+                    arr.push(e.firstChild.value);
+                }
+            });
+            saveArr.push(arr);
+        })
+
+        localStorage.setItem(key, JSON.stringify(saveArr))
+    }
+    else if (key == "tea") {
+        const sumArr = document.querySelector('.teaSum');
+    
+        const elem = sumArr.parentNode;
         let arr = [];
         arr.push(elem.childNodes[1].innerText);
         elem.childNodes.forEach((e, i) => {
@@ -115,16 +180,15 @@ function save() {
                 arr.push(e.firstChild.value);
             }
         });
-        saveArr.push(arr);
-    })
 
-    localStorage.setItem("save", JSON.stringify(saveArr))
+        localStorage.setItem(key, JSON.stringify(arr))
+    }
 }
-function load() {
-    if (localStorage.getItem("save") == undefined)
+function load(key) {
+    if (localStorage.getItem(key) == undefined)
         return undefined;
 
-    var arr = JSON.parse(localStorage.getItem("save"));
+    var arr = JSON.parse(localStorage.getItem(key));
     return arr;
 }
 
