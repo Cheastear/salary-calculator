@@ -57,6 +57,7 @@ function render() {
   });
 
   addRow(table, "tea", "Tea");
+  addRow(table, "teaCash", "Tea cash");
   addRow(table, "home", "Home");
 }
 
