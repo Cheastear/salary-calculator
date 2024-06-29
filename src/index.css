@@ -1,0 +1,36 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+tr,
+th,
+body,
+html {
+  padding: 0;
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  border: 1px solid #000;
+}
+
+input[type="text"] {
+  width: 50px;
+  border: 0px solid #000;
+  height: 22px;
+}
+
+input[type="text"]:focus {
+  border: 0px solid #000;
+}
