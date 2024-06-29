@@ -142,7 +142,7 @@ function onchange(e) {
   });
   sums[sums.length - 1].innerText = sum;
 
-  document.querySelector(".percent").innerText = ((sum / 100) * 45).toFixed(2);
+  document.querySelector(".percent").innerText = ((sum / 100) * 40).toFixed(2);
 
   if (nodes[nodes.length - 1].firstChild == e.target) {
     const th = document.createElement("th");
