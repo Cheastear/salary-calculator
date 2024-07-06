@@ -25,12 +25,12 @@ th {
   border: 1px solid #000;
 }
 
-input[type="text"] {
+input[type="number"] {
   width: 50px;
   border: 0px solid #000;
   height: 22px;
 }
 
-input[type="text"]:focus {
+input[type="number"]:focus {
   border: 0px solid #000;
 }

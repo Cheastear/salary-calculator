@@ -21,7 +21,7 @@ function Line({ data, onChange, index = 0, Name = "" }) {
           <th key={i}>
             <input
               value={elem}
-              type="text"
+              type="number"
               onChange={(e) => onChange(index, i, parseInt(e.target.value))}
             />
           </th>
