@@ -121,7 +121,7 @@ function App() {
           <tr>
             <th>Sum: </th>
             <th>{calculateSum()}</th>
-            <th>{((calculateSum() / 100) * 45).toFixed(2)}</th>
+            <th>{((calculateSum() / 100) * 40).toFixed(2)}</th>
           </tr>
           <Line data={tea} Name="Tea" onChange={teaOnChange} />
           <Line data={teaCash} Name="Tea cash" onChange={teaCashOnChange} />
