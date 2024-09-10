@@ -2,32 +2,53 @@ import { useState, useEffect } from "react";
 import Line from "./components/Line";
 
 function App() {
+  const [selectedDate, setSelectedDate] = useState({
+    month: new Date().getUTCMonth() + 1,
+    year: new Date().getUTCFullYear(),
+  });
   const [data, setData] = useState(() => {
-    const savedData = JSON.parse(localStorage.getItem("save"));
-    return savedData ? savedData : Array(31).fill([0]);
-  });
-  const [tea, setTea] = useState(() => {
-    const savedData = JSON.parse(localStorage.getItem("tea"));
-    return savedData ? savedData : [0];
-  });
-  const [teaCash, setTeaCash] = useState(() => {
-    const savedData = JSON.parse(localStorage.getItem("teaCash"));
-    return savedData ? savedData : [0];
-  });
-  const [home, setHome] = useState(() => {
-    const savedData = JSON.parse(localStorage.getItem("home"));
-    return savedData ? savedData : [0];
+    const qq = localStorage.getItem("save");
+    if (qq === null) {
+      return {
+        date: selectedDate,
+        save: Array(31).fill([0]),
+        tea: [0],
+        teaCash: [0],
+        home: [0],
+      };
+    }
+    const savedData = JSON.parse(qq).find((elem) => {
+      if (
+        elem.date.month === selectedDate.month &&
+        elem.date.year === selectedDate.year
+      )
+        return elem;
+    });
+    return savedData;
   });
 
   useEffect(() => {
-    localStorage.setItem("save", JSON.stringify(data));
-    localStorage.setItem("tea", JSON.stringify(tea));
-    localStorage.setItem("teaCash", JSON.stringify(teaCash));
-    localStorage.setItem("home", JSON.stringify(home));
-  }, [data, tea, teaCash, home]);
+    const savedData = localStorage.getItem("save");
+    if (savedData === null)
+      return localStorage.setItem("save", JSON.stringify([data]));
+
+    localStorage.setItem(
+      "save",
+      JSON.stringify(
+        JSON.parse(savedData).map((elem) => {
+          if (
+            elem.date.month === selectedDate.month &&
+            elem.date.year === selectedDate.year
+          )
+            return data;
+          return elem;
+        })
+      )
+    );
+  }, [data]);
 
   const dataOnChange = (x, y, value) => {
-    const copyData = data.map((row, rowIndex) => {
+    const copyData = data.save.map((row, rowIndex) => {
       if (rowIndex === x) {
         const updatedRow = row.map((cell, cellIndex) => {
           if (cellIndex === y) return parseInt(value) || 0;
@@ -44,11 +65,11 @@ function App() {
       }
     });
 
-    setData(copyData);
+    setData({ ...data, save: copyData });
   };
 
   const teaOnChange = (x, y, value) => {
-    const updatedRow = tea.map((cell, cellIndex) => {
+    const updatedRow = data.tea.map((cell, cellIndex) => {
       if (cellIndex === y) return parseInt(value) || 0;
       else return cell;
     });
@@ -57,11 +78,12 @@ function App() {
       updatedRow.push(0);
     }
 
-    setTea(updatedRow);
+    setData({ ...data, tea: updatedRow });
   };
 
   const teaCashOnChange = (x, y, value) => {
-    const updatedRow = teaCash.map((cell, cellIndex) => {
+    console.log("qq");
+    const updatedRow = data.teaCash.map((cell, cellIndex) => {
       if (cellIndex === y) return parseInt(value) || 0;
       else return cell;
     });
@@ -70,11 +92,11 @@ function App() {
       updatedRow.push(0);
     }
 
-    setTeaCash(updatedRow);
+    setData({ ...data, teaCash: updatedRow });
   };
 
   const homeOnChange = (x, y, value) => {
-    const updatedRow = home.map((cell, cellIndex) => {
+    const updatedRow = data.home.map((cell, cellIndex) => {
       if (cellIndex === y) return parseInt(value) || 0;
       else return cell;
     });
@@ -83,11 +105,12 @@ function App() {
       updatedRow.push(0);
     }
 
-    setHome(updatedRow);
+    console.log("qq");
+    setData({ ...data, home: updatedRow });
   };
 
   const calculateSum = () => {
-    return data.reduce((acc, row) => {
+    return data.save.reduce((acc, row) => {
       return acc + row.reduce((rowAcc, cell) => rowAcc + cell, 0);
     }, 0);
   };
@@ -96,15 +119,78 @@ function App() {
     const confirmed = window.confirm("Ви дійсно хочете видалити всі дані?");
     if (confirmed) {
       localStorage.removeItem("save");
-      setData(Array(31).fill([0]));
-      setTea([0]);
-      setTeaCash([0]);
-      setHome([0]);
+      setData({
+        save: Array(31).fill([0]),
+        tea: [0],
+        teaCash: [0],
+        home: [0],
+      });
     }
+  };
+
+  const prevDate = () => {
+    const newSelectedDate = {
+      month: selectedDate.month === 1 ? 12 : selectedDate.month - 1,
+      year:
+        selectedDate.month === 1 ? selectedDate.year - 1 : selectedDate.year,
+    };
+
+    let savedData = JSON.parse(localStorage.getItem("save")).find((elem) => {
+      if (
+        elem.date.month === newSelectedDate.month &&
+        elem.date.year === newSelectedDate.year
+      )
+        return elem;
+    });
+
+    if (!savedData) {
+      savedData = {
+        date: selectedDate,
+        save: Array(31).fill([0]),
+        tea: [0],
+        teaCash: [0],
+        home: [0],
+      };
+    }
+
+    setSelectedDate(newSelectedDate);
+    setData(savedData);
+  };
+
+  const nextDate = () => {
+    const newSelectedDate = {
+      month: selectedDate.month === 12 ? 1 : selectedDate.month + 1,
+      year:
+        selectedDate.month === 12 ? selectedDate.year + 1 : selectedDate.year,
+    };
+
+    let savedData = JSON.parse(localStorage.getItem("save")).find((elem) => {
+      if (
+        elem.date.month === newSelectedDate.month &&
+        elem.date.year === newSelectedDate.year
+      )
+        return elem;
+    });
+
+    if (!savedData) {
+      savedData = {
+        date: selectedDate,
+        save: Array(31).fill([0]),
+        tea: [0],
+        teaCash: [0],
+        home: [0],
+      };
+    }
+
+    setSelectedDate(newSelectedDate);
+    setData(savedData);
   };
 
   return (
     <>
+      <h1>{`${selectedDate.month}.${selectedDate.year}`}</h1>
+      <button onClick={prevDate}>Prev</button>
+      <button onClick={nextDate}>Next</button>
       <table>
         <thead>
           <tr>
@@ -113,7 +199,7 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          {data.map((elem, i) => {
+          {data.save.map((elem, i) => {
             return (
               <Line key={i} data={elem} index={i} onChange={dataOnChange} />
             );
@@ -123,9 +209,23 @@ function App() {
             <th>{calculateSum()}</th>
             <th>{((calculateSum() / 100) * 40).toFixed(2)}</th>
           </tr>
-          <Line data={tea} Name="Tea" onChange={teaOnChange} />
-          <Line data={teaCash} Name="Tea cash" onChange={teaCashOnChange} />
-          <Line data={home} Name="Home" onChange={homeOnChange} />
+          <Line data={data.tea} Name="Tea" onChange={teaOnChange} />
+          <Line
+            data={data.teaCash}
+            Name="Tea cash"
+            onChange={teaCashOnChange}
+          />
+          <Line data={data.home} Name="Home" onChange={homeOnChange} />
+
+          <tr>
+            <th>Sum: </th>
+            <th>
+              {calculateSum() +
+                data.tea.reduce((rowAcc, cell) => rowAcc + cell, 0) +
+                data.teaCash.reduce((rowAcc, cell) => rowAcc + cell, 0) +
+                data.home.reduce((rowAcc, cell) => rowAcc + cell, 0)}
+            </th>
+          </tr>
         </tbody>
       </table>
       <button onClick={clearData}>Clear</button>

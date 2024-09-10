@@ -34,3 +34,11 @@ input[type="number"] {
 input[type="number"]:focus {
   border: 0px solid #000;
 }
+
+h1 {
+  margin: 15px 0 0;
+}
+
+button {
+  margin: 10px 0;
+}
