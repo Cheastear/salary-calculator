@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import Line from "./components/Line";
 
+const SAVE = "qwerty";
+
 function App() {
   const [selectedDate, setSelectedDate] = useState({
     month: new Date().getUTCMonth() + 1,
     year: new Date().getUTCFullYear(),
   });
   const [data, setData] = useState(() => {
-    const qq = localStorage.getItem("save");
+    const qq = localStorage.getItem(SAVE);
     if (qq === null) {
       return {
         date: selectedDate,
@@ -28,12 +30,12 @@ function App() {
   });
 
   useEffect(() => {
-    const savedData = localStorage.getItem("save");
+    const savedData = localStorage.getItem(SAVE);
     if (savedData === null)
-      return localStorage.setItem("save", JSON.stringify([data]));
+      return localStorage.setItem(SAVE, JSON.stringify([data]));
 
     localStorage.setItem(
-      "save",
+      SAVE,
       JSON.stringify(
         JSON.parse(savedData).map((elem) => {
           if (
@@ -118,7 +120,7 @@ function App() {
   const clearData = () => {
     const confirmed = window.confirm("Ви дійсно хочете видалити всі дані?");
     if (confirmed) {
-      localStorage.removeItem("save");
+      localStorage.removeItem(SAVE);
       setData({
         save: Array(31).fill([0]),
         tea: [0],
@@ -135,7 +137,7 @@ function App() {
         selectedDate.month === 1 ? selectedDate.year - 1 : selectedDate.year,
     };
 
-    let savedData = JSON.parse(localStorage.getItem("save")).find((elem) => {
+    let savedData = JSON.parse(localStorage.getItem(SAVE)).find((elem) => {
       if (
         elem.date.month === newSelectedDate.month &&
         elem.date.year === newSelectedDate.year
@@ -164,7 +166,7 @@ function App() {
         selectedDate.month === 12 ? selectedDate.year + 1 : selectedDate.year,
     };
 
-    let savedData = JSON.parse(localStorage.getItem("save")).find((elem) => {
+    let savedData = JSON.parse(localStorage.getItem(SAVE)).find((elem) => {
       if (
         elem.date.month === newSelectedDate.month &&
         elem.date.year === newSelectedDate.year
