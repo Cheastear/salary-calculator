@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Line from "./components/Line";
 
 const SAVE = "qwerty";
@@ -29,26 +29,6 @@ function App() {
     return savedData;
   });
 
-  useEffect(() => {
-    const savedData = localStorage.getItem(SAVE);
-    if (savedData === null)
-      return localStorage.setItem(SAVE, JSON.stringify([data]));
-
-    localStorage.setItem(
-      SAVE,
-      JSON.stringify(
-        JSON.parse(savedData).map((elem) => {
-          if (
-            elem.date.month === selectedDate.month &&
-            elem.date.year === selectedDate.year
-          )
-            return data;
-          return elem;
-        })
-      )
-    );
-  }, [data]);
-
   const dataOnChange = (x, y, value) => {
     const copyData = data.save.map((row, rowIndex) => {
       if (rowIndex === x) {
@@ -68,6 +48,7 @@ function App() {
     });
 
     setData({ ...data, save: copyData });
+    saveData();
   };
 
   const teaOnChange = (x, y, value) => {
@@ -81,6 +62,7 @@ function App() {
     }
 
     setData({ ...data, tea: updatedRow });
+    saveData();
   };
 
   const teaCashOnChange = (x, y, value) => {
@@ -95,6 +77,7 @@ function App() {
     }
 
     setData({ ...data, teaCash: updatedRow });
+    saveData();
   };
 
   const homeOnChange = (x, y, value) => {
@@ -107,8 +90,8 @@ function App() {
       updatedRow.push(0);
     }
 
-    console.log("qq");
     setData({ ...data, home: updatedRow });
+    saveData();
   };
 
   const calculateSum = () => {
@@ -127,6 +110,7 @@ function App() {
         teaCash: [0],
         home: [0],
       });
+      saveData();
     }
   };
 
@@ -147,13 +131,15 @@ function App() {
 
     if (!savedData) {
       savedData = {
-        date: selectedDate,
+        date: newSelectedDate,
         save: Array(31).fill([0]),
         tea: [0],
         teaCash: [0],
         home: [0],
       };
     }
+
+    saveData();
 
     setSelectedDate(newSelectedDate);
     setData(savedData);
@@ -176,7 +162,7 @@ function App() {
 
     if (!savedData) {
       savedData = {
-        date: selectedDate,
+        date: newSelectedDate,
         save: Array(31).fill([0]),
         tea: [0],
         teaCash: [0],
@@ -184,8 +170,35 @@ function App() {
       };
     }
 
+    saveData();
+
     setSelectedDate(newSelectedDate);
     setData(savedData);
+  };
+
+  const saveData = () => {
+    let savedData = JSON.parse(localStorage.getItem(SAVE));
+
+    if (savedData === null)
+      savedData = [
+        {
+          date: selectedDate,
+          save: Array(31).fill([0]),
+          tea: [0],
+          teaCash: [0],
+          home: [0],
+        },
+      ];
+    const indexData = savedData.findIndex(
+      (elem) =>
+        elem.date.month === selectedDate.month &&
+        elem.date.year === selectedDate.year
+    );
+
+    if (indexData !== -1) savedData[indexData] = data;
+    else savedData.push(data);
+
+    localStorage.setItem(SAVE, JSON.stringify(savedData));
   };
 
   return (
