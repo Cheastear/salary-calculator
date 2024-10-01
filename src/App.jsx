@@ -23,8 +23,17 @@ function App() {
       if (
         elem.date.month === selectedDate.month &&
         elem.date.year === selectedDate.year
-      )
-        return elem;
+      ) {
+        if (elem !== undefined) return elem;
+        else
+          return {
+            date: selectedDate,
+            save: Array(31).fill([0]),
+            tea: [0],
+            teaCash: [0],
+            home: [0],
+          };
+      }
     });
     return savedData;
   });
