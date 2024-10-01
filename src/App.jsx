@@ -24,18 +24,19 @@ function App() {
         elem.date.month === selectedDate.month &&
         elem.date.year === selectedDate.year
       ) {
-        if (elem !== undefined) return elem;
-        else
-          return {
-            date: selectedDate,
-            save: Array(31).fill([0]),
-            tea: [0],
-            teaCash: [0],
-            home: [0],
-          };
+        return elem;
       }
     });
-    return savedData;
+
+    if (savedData !== undefined) return savedData;
+    else
+      return {
+        date: selectedDate,
+        save: Array(31).fill([0]),
+        tea: [0],
+        teaCash: [0],
+        home: [0],
+      };
   });
 
   const dataOnChange = (x, y, value) => {
