@@ -46,6 +46,7 @@ function App() {
           if (cellIndex === y) return parseInt(value) || 0;
           else return cell;
         });
+        console.log(updatedRow);
 
         if (updatedRow[updatedRow.length - 1] !== 0) {
           updatedRow.push(0);
@@ -56,9 +57,9 @@ function App() {
         return row;
       }
     });
-
+    console.log(copyData);
     setData({ ...data, save: copyData });
-    saveData();
+    saveData({ ...data, save: copyData });
   };
 
   const teaOnChange = (x, y, value) => {
@@ -72,7 +73,7 @@ function App() {
     }
 
     setData({ ...data, tea: updatedRow });
-    saveData();
+    saveData({ ...data, tea: updatedRow });
   };
 
   const teaCashOnChange = (x, y, value) => {
@@ -87,7 +88,7 @@ function App() {
     }
 
     setData({ ...data, teaCash: updatedRow });
-    saveData();
+    saveData({ ...data, teaCash: updatedRow });
   };
 
   const homeOnChange = (x, y, value) => {
@@ -101,7 +102,7 @@ function App() {
     }
 
     setData({ ...data, home: updatedRow });
-    saveData();
+    saveData({ ...data, home: updatedRow });
   };
 
   const calculateSum = () => {
@@ -120,7 +121,12 @@ function App() {
         teaCash: [0],
         home: [0],
       });
-      saveData();
+      saveData({
+        save: Array(31).fill([0]),
+        tea: [0],
+        teaCash: [0],
+        home: [0],
+      });
     }
   };
 
@@ -149,7 +155,7 @@ function App() {
       };
     }
 
-    saveData();
+    saveData(savedData);
 
     setSelectedDate(newSelectedDate);
     setData(savedData);
@@ -180,13 +186,13 @@ function App() {
       };
     }
 
-    saveData();
+    saveData(savedData);
 
     setSelectedDate(newSelectedDate);
     setData(savedData);
   };
 
-  const saveData = () => {
+  const saveData = (data) => {
     let savedData = JSON.parse(localStorage.getItem(SAVE));
 
     if (savedData === null)
