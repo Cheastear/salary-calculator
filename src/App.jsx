@@ -9,34 +9,20 @@ function App() {
     year: new Date().getUTCFullYear(),
   });
   const [data, setData] = useState(() => {
-    const qq = localStorage.getItem(SAVE);
-    if (qq === null) {
-      return {
+    const savedData = JSON.parse(localStorage.getItem(SAVE)) || [];
+    return (
+      savedData.find(
+        (elem) =>
+          elem.date.month === selectedDate.month &&
+          elem.date.year === selectedDate.year
+      ) || {
         date: selectedDate,
         save: Array(31).fill([0]),
         tea: [0],
         teaCash: [0],
         home: [0],
-      };
-    }
-    const savedData = JSON.parse(qq).find((elem) => {
-      if (
-        elem.date.month === selectedDate.month &&
-        elem.date.year === selectedDate.year
-      ) {
-        return elem;
       }
-    });
-
-    if (savedData !== undefined) return savedData;
-    else
-      return {
-        date: selectedDate,
-        save: Array(31).fill([0]),
-        tea: [0],
-        teaCash: [0],
-        home: [0],
-      };
+    );
   });
 
   const dataOnChange = (x, y, value) => {
@@ -57,7 +43,7 @@ function App() {
         return row;
       }
     });
-    console.log(copyData);
+
     setData({ ...data, save: copyData });
     saveData({ ...data, save: copyData });
   };
@@ -77,7 +63,6 @@ function App() {
   };
 
   const teaCashOnChange = (x, y, value) => {
-    console.log("qq");
     const updatedRow = data.teaCash.map((cell, cellIndex) => {
       if (cellIndex === y) return parseInt(value) || 0;
       else return cell;
@@ -137,28 +122,21 @@ function App() {
         selectedDate.month === 1 ? selectedDate.year - 1 : selectedDate.year,
     };
 
-    let savedData = JSON.parse(localStorage.getItem(SAVE)).find((elem) => {
-      if (
+    const savedData = JSON.parse(localStorage.getItem(SAVE)) || [];
+    const foundData = savedData.find(
+      (elem) =>
         elem.date.month === newSelectedDate.month &&
         elem.date.year === newSelectedDate.year
-      )
-        return elem;
-    });
-
-    if (!savedData) {
-      savedData = {
-        date: newSelectedDate,
-        save: Array(31).fill([0]),
-        tea: [0],
-        teaCash: [0],
-        home: [0],
-      };
-    }
-
-    saveData(savedData);
+    ) || {
+      date: newSelectedDate,
+      save: Array(31).fill([0]),
+      tea: [0],
+      teaCash: [0],
+      home: [0],
+    };
 
     setSelectedDate(newSelectedDate);
-    setData(savedData);
+    setData(foundData);
   };
 
   const nextDate = () => {
@@ -168,51 +146,37 @@ function App() {
         selectedDate.month === 12 ? selectedDate.year + 1 : selectedDate.year,
     };
 
-    let savedData = JSON.parse(localStorage.getItem(SAVE)).find((elem) => {
-      if (
+    const savedData = JSON.parse(localStorage.getItem(SAVE)) || [];
+    const foundData = savedData.find(
+      (elem) =>
         elem.date.month === newSelectedDate.month &&
         elem.date.year === newSelectedDate.year
-      )
-        return elem;
-    });
-
-    if (!savedData) {
-      savedData = {
-        date: newSelectedDate,
-        save: Array(31).fill([0]),
-        tea: [0],
-        teaCash: [0],
-        home: [0],
-      };
-    }
-
-    saveData(savedData);
+    ) || {
+      date: newSelectedDate,
+      save: Array(31).fill([0]),
+      tea: [0],
+      teaCash: [0],
+      home: [0],
+    };
 
     setSelectedDate(newSelectedDate);
-    setData(savedData);
+    setData(foundData);
   };
 
-  const saveData = (data) => {
-    let savedData = JSON.parse(localStorage.getItem(SAVE));
+  const saveData = (newData) => {
+    let savedData = JSON.parse(localStorage.getItem(SAVE)) || [];
 
-    if (savedData === null)
-      savedData = [
-        {
-          date: selectedDate,
-          save: Array(31).fill([0]),
-          tea: [0],
-          teaCash: [0],
-          home: [0],
-        },
-      ];
-    const indexData = savedData.findIndex(
+    const index = savedData.findIndex(
       (elem) =>
-        elem.date.month === selectedDate.month &&
-        elem.date.year === selectedDate.year
+        elem.date.month === newData.date.month &&
+        elem.date.year === newData.date.year
     );
 
-    if (indexData !== -1) savedData[indexData] = data;
-    else savedData.push(data);
+    if (index !== -1) {
+      savedData[index] = newData;
+    } else {
+      savedData.push(newData);
+    }
 
     localStorage.setItem(SAVE, JSON.stringify(savedData));
   };
