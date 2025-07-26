@@ -1,7 +1,7 @@
-import { useState } from "react";
-import Line from "./components/Line";
+import { useState } from 'react';
+import Line from './components/Line';
 
-const SAVE = "qwerty";
+const SAVE = 'qwerty';
 
 function App() {
   const [selectedDate, setSelectedDate] = useState({
@@ -97,7 +97,7 @@ function App() {
   };
 
   const clearData = () => {
-    const confirmed = window.confirm("Ви дійсно хочете видалити всі дані?");
+    const confirmed = window.confirm('Ви дійсно хочете видалити всі дані?');
     if (confirmed) {
       localStorage.removeItem(SAVE);
       setData({
@@ -216,6 +216,12 @@ function App() {
             <th>Sum: </th>
             <th>
               {calculateSum() +
+                data.tea.reduce((rowAcc, cell) => rowAcc + cell, 0) +
+                data.teaCash.reduce((rowAcc, cell) => rowAcc + cell, 0) +
+                data.home.reduce((rowAcc, cell) => rowAcc + cell, 0)}
+            </th>
+            <th>
+              {parseFloat(((calculateSum() / 100) * 40).toFixed(2)) +
                 data.tea.reduce((rowAcc, cell) => rowAcc + cell, 0) +
                 data.teaCash.reduce((rowAcc, cell) => rowAcc + cell, 0) +
                 data.home.reduce((rowAcc, cell) => rowAcc + cell, 0)}
